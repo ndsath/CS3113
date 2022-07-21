@@ -1,4 +1,10 @@
-
+//
+//  GameProj3.cpp
+//  SDLProject
+//
+//  Created by Nathan Atherley on 7/12/22.
+//  Copyright © 2022 ctg. All rights reserved.
+//
 
 #define GL_SILENCE_DEPRECATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -55,11 +61,11 @@ const char V_SHADER_PATH[] = "shaders/vertex_textured.glsl",
            F_SHADER_PATH[] = "shaders/fragment_textured.glsl";
 
 const float MILLISECONDS_IN_SECOND = 1000.0;
-const char SPRITESHEET_FILEPATH[] = "more_ships.png"; // george
-const char PLATFORM_FILEPATH[]    = "rock_platform.png"; // platfform
-const char PAD_FILEPATH[]         = "plat.png";
-const char FONT_FILEPATH[]        = "font1.png";
-//const char WALL_FILEPATH[]        = "metal_wall.png"; //metal wall
+const char SPRITESHEET_FILEPATH[] = "more_ships.png"; // ship
+const char PLATFORM_FILEPATH[]    = "rock_platform.png"; // bad platfform
+const char PAD_FILEPATH[]         = "plat.png"; // good platform
+const char FONT_FILEPATH[]        = "font1.png"; // font spread sheet
+
 
 const int NUMBER_OF_TEXTURES = 1; // to be generated, that is
 const GLint LEVEL_OF_DETAIL  = 0;  // base image level; Level n is the nth mipmap reduction image
@@ -84,8 +90,6 @@ float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND;
 float delta_time = ticks - previous_ticks;
 float curr_val = 0;
 float curr_ticks = ticks;
-//previous_ticks = ticks;
-
 
 /**
  GENERAL FUNCTIONS
@@ -121,14 +125,6 @@ GLuint load_texture(const char* filepath)
     
     return textureID;
 }
-
-
-
-
-
-
-
-
 
 void initialise()
 {
@@ -183,6 +179,7 @@ void initialise()
     state.player->set_width(0.80f);
     
     // Platform stuff
+   
     GLuint platform_texture_id = load_texture(PLATFORM_FILEPATH);
     
     state.platforms = new Entity[PLATFORM_COUNT];
@@ -250,20 +247,13 @@ void process_input()
                         break;
                       
                     case SDLK_LEFT:
-                        //SDL_Delay(1000);
                         state.player->set_acceleration(glm::vec3(-10.0f, 0.0f, 0.0f));
-                        //curr_val += 100;
-                        //std::cout << curr_val << std::endl;
                         break;
                      
                         
                     case SDLK_RIGHT:
-                        //SDL_Delay(1000);
                         state.player->set_acceleration(glm::vec3(10.0f, 0.0f, 0.0f));
-                        //curr_val += 100;
-                        //std::cout << curr_val << std::endl;
                         break;
-                       
                 }
                 
             default:
@@ -309,17 +299,24 @@ void update()
         return;
     }
     
+    GLuint font_texture_id = load_texture(FONT_FILEPATH);
+    
+    // landing here indicates the player has lost
     for (int j = 0; j < PLATFORM_COUNT; ++j) {
         if (state.player->check_collision(&state.platforms[j])) {
-            std::cout << "bad platform" << std::endl;
-        
+            //state.player->DrawText(&program, font_texture_id, "YOU LOSE", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 2.0f, 0.0f), FONTBANK_SIZE);
+            state.player->speed = 0.0f;
+            std::cout << "YOU LOSE!" << std::endl; // lose when landing on tan rocks
         }
     }
      
-    
+    // landing here indicates the player has one
     for (int i = 0; i < PAD_COUNT; ++i) {
         if (state.player->check_collision(&state.pad[i])) {
-            std::cout << "good platform" << std::endl;
+            std::cout << "YOU WIN!" << std::endl; // wins when landing on grey rocks
+            state.player->speed = 0.0f;
+            state.player->DrawText(&program, font_texture_id, "YOU WIN", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 2.0f, 0.0f), FONTBANK_SIZE);
+            //state.pad->DrawText(&program, font_texture_id, "YOU WIN", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 3.0f, 0.0f), FONTBANK_SIZE);
         }
     }
     
@@ -379,9 +376,6 @@ int main(int argc, char* argv[])
         update();
         render();
     }
-
-    
-    
     shutdown();
     return 0;
 }
