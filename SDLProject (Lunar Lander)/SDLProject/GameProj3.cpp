@@ -160,7 +160,7 @@ void initialise()
     state.player->set_position(glm::vec3(0.0f, 4.0f, 0.0f));
     state.player->set_movement(glm::vec3(0.0f));
     state.player->speed = 1.0f;
-    state.player->set_acceleration(glm::vec3(0.0f, -0.5, 0.0f));
+    state.player->set_acceleration(glm::vec3(0.0f, -1.0, 0.0f));
     state.player->texture_id = load_texture(SPRITESHEET_FILEPATH);
     
     // Walking
@@ -184,6 +184,11 @@ void initialise()
     
     state.platforms = new Entity[PLATFORM_COUNT];
     
+    state.platforms[PLATFORM_COUNT - 1].texture_id = platform_texture_id;
+    state.platforms[PLATFORM_COUNT - 1].set_position(glm::vec3(-4.55f, -3.35f, 0.0f));
+    state.platforms[PLATFORM_COUNT - 1].update(0.0f, NULL, 0);
+   
+    
     for (int j = 0; j < PLATFORM_COUNT - 1; j++)
     {
         
@@ -193,11 +198,6 @@ void initialise()
     }
     
     
-    state.platforms[PLATFORM_COUNT - 1].texture_id = platform_texture_id;
-    state.platforms[PLATFORM_COUNT - 1].set_position(glm::vec3(-4.55f, -3.35f, 0.0f));
-    state.platforms[PLATFORM_COUNT - 1].update(0.0f, NULL, 0);
-   
-   
     // Pad
     GLuint pad_texture_id = load_texture(PAD_FILEPATH);
     state.pad = new Entity[PAD_COUNT];
@@ -288,55 +288,94 @@ void update()
 {
     float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND;
     float delta_time = ticks - previous_ticks;
-
     previous_ticks = ticks;
-    
+      
     delta_time += accumulator;
-    
+      
     if (delta_time < FIXED_TIMESTEP)
     {
         accumulator = delta_time;
         return;
     }
     
-    GLuint font_texture_id = load_texture(FONT_FILEPATH);
-    
-    // landing here indicates the player has lost
-    for (int j = 0; j < PLATFORM_COUNT; ++j) {
-        if (state.player->check_collision(&state.platforms[j])) {
-            //state.player->DrawText(&program, font_texture_id, "YOU LOSE", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 2.0f, 0.0f), FONTBANK_SIZE);
-            state.player->speed = 0.0f;
-            std::cout << "YOU LOSE!" << std::endl; // lose when landing on tan rocks
-        }
-    }
-     
-    // landing here indicates the player has one
-    for (int i = 0; i < PAD_COUNT; ++i) {
-        if (state.player->check_collision(&state.pad[i])) {
-            std::cout << "YOU WIN!" << std::endl; // wins when landing on grey rocks
-            state.player->speed = 0.0f;
-            state.player->DrawText(&program, font_texture_id, "YOU WIN", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 2.0f, 0.0f), FONTBANK_SIZE);
-            //state.pad->DrawText(&program, font_texture_id, "YOU WIN", WINDOW_WIDTH*WINDOW_HEIGHT, 1, glm::vec3(0.0f, 3.0f, 0.0f), FONTBANK_SIZE);
-        }
-    }
-    
     if (flag) {
-     state.player->update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
+        state.player->update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
         flag = false;
     }
-     
+        
     else{
         state.player->update(FIXED_TIMESTEP, state.pad, PAD_COUNT);
         flag = true;
     }
-    
+       
     while (delta_time >= FIXED_TIMESTEP) {
-        
         // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
-        
         delta_time -= FIXED_TIMESTEP;
+        
     }
     accumulator = delta_time;
+}
+
+void DrawText(ShaderProgram *program, GLuint font_texture_id, std::string text, float screen_size, float spacing, glm::vec3 position, int FONTBANK_SIZE)
+{
+    // Scale the size of the fontbank in the UV-plane
+    // We will use this for spacing and positioning
+    float width = 1.0f / FONTBANK_SIZE;
+    float height = 1.0f / FONTBANK_SIZE;
+
+    // Instead of having a single pair of arrays, we'll have a series of pairs—one for each character
+    // Don't forget to include <vector>!
+    std::vector<float> vertices;
+    std::vector<float> texture_coordinates;
+
+    // For every character...
+    for (int i = 0; i < text.size(); i++) {
+        // 1. Get their index in the spritesheet, as well as their offset (i.e. their position
+        //    relative to the whole sentence)
+        int spritesheet_index = (int) text[i];  // ascii value of character
+        float offset = (screen_size + spacing) * i;
+        
+        // 2. Using the spritesheet index, we can calculate our U- and V-coordinates
+        float u_coordinate = (float) (spritesheet_index % FONTBANK_SIZE) / FONTBANK_SIZE;
+        float v_coordinate = (float) (spritesheet_index / FONTBANK_SIZE) / FONTBANK_SIZE;
+
+        // 3. Inset the current pair in both vectors
+        vertices.insert(vertices.end(), {
+            offset + (-0.5f * screen_size), 0.5f * screen_size,
+            offset + (-0.5f * screen_size), -0.5f * screen_size,
+            offset + (0.5f * screen_size), 0.5f * screen_size,
+            offset + (0.5f * screen_size), -0.5f * screen_size,
+            offset + (0.5f * screen_size), 0.5f * screen_size,
+            offset + (-0.5f * screen_size), -0.5f * screen_size,
+        });
+
+        texture_coordinates.insert(texture_coordinates.end(), {
+            u_coordinate, v_coordinate,
+            u_coordinate, v_coordinate + height,
+            u_coordinate + width, v_coordinate,
+            u_coordinate + width, v_coordinate + height,
+            u_coordinate + width, v_coordinate,
+            u_coordinate, v_coordinate + height,
+        });
+    }
+
+    // 4. And render all of them using the pairs
+    glm::mat4 model_matrix = glm::mat4(1.0f);
+    model_matrix = glm::translate(model_matrix, position);
+    
+    program->SetModelMatrix(model_matrix);
+    glUseProgram(program->programID);
+    
+    glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices.data());
+    glEnableVertexAttribArray(program->positionAttribute);
+    glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texture_coordinates.data());
+    glEnableVertexAttribArray(program->texCoordAttribute);
+    
+    glBindTexture(GL_TEXTURE_2D, font_texture_id);
+    glDrawArrays(GL_TRIANGLES, 0, (int) (text.size() * 6));
+    
+    glDisableVertexAttribArray(program->positionAttribute);
+    glDisableVertexAttribArray(program->texCoordAttribute);
 }
 
 
@@ -344,12 +383,33 @@ void render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     
+   
     state.player->render(&program);
     //state.pad->render(&program);
     
     for (int i = 0; i < PAD_COUNT; i++) state.pad[i].render(&program);
     
     for (int i = 0; i < PLATFORM_COUNT; i++) state.platforms[i].render(&program);
+    
+    GLuint font_texture_id = load_texture(FONT_FILEPATH);
+    
+    // landing here indicates the player has lost
+    for (int j = 0; j < PLATFORM_COUNT; ++j) {
+        if (state.player->check_collision(&state.platforms[j])) {
+            std::cout << "YOU LOSE!" << std::endl; // lose when landing on tan rocks
+            state.player->speed = 0.0f;
+            DrawText(&program, font_texture_id, "YOU LOSE", 1, 0.0f, glm::vec3(-3.0f, 2.0f, 0.0f), FONTBANK_SIZE);
+        }
+    }
+    
+    // landing here indicates the player has won
+    for (int i = 0; i < PAD_COUNT; ++i) {
+        if (state.player->check_collision(&state.pad[i])) {
+            std::cout << "YOU WIN!" << std::endl; // wins when landing on grey rocks
+            state.player->speed = 0.0f;
+            DrawText(&program, font_texture_id, "YOU WIN", 1, 0.0f, glm::vec3(-3.0f, 2.0f, 0.0f), FONTBANK_SIZE);
+        }
+    }
     
     SDL_GL_SwapWindow(display_window);
 }
