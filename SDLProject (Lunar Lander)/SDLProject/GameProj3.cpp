@@ -33,6 +33,7 @@
 /**
  STRUCTS AND ENUMS
  */
+/*
 struct GameState
 {
     Entity* player;
