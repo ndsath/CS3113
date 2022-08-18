@@ -258,6 +258,12 @@ void update()
         switch_to_scene(levelC);
     }
     /*
+    if ((current_scene == levelA && levelA->LIVES <= 0) || (current_scene == levelB && levelB->LIVES <= 0)
+        || (current_scene == levelC && levelB->LIVES <= 0)){
+        levelA->LIVES = 3;
+        switch_to_scene(levelA);
+    }
+    
     if ((current_scene == levelC && levelC->LIVES <= 0) || (current_scene == levelB && levelB->LIVES <= 0)
         || (current_scene == levelA && levelA->LIVES <= 0)){
         switch_to_scene(loss_screen);

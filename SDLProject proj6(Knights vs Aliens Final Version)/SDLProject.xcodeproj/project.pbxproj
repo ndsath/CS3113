@@ -13,6 +13,7 @@
 		76B1721B28AE090A00505665 /* power3.png in Sources */ = {isa = PBXBuildFile; fileRef = 76B1721A28AE07C000505665 /* power3.png */; };
 		76B1721E28AE2F0F00505665 /* WinScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76B1721C28AE2F0F00505665 /* WinScreen.cpp */; };
 		76B1722128AE2F2B00505665 /* LossScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76B1721F28AE2F2B00505665 /* LossScreen.cpp */; };
+		76B1722328AEC7FB00505665 /* aliens.mp3 in Sources */ = {isa = PBXBuildFile; fileRef = 76B1722228AEC7E100505665 /* aliens.mp3 */; };
 		76C21B22284001F200132D07 /* GameProjFinal(final).cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76C21B21284001F200132D07 /* GameProjFinal(final).cpp */; };
 		76E0D6D0289AD0DE004660D8 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E0D6CE289AD0DE004660D8 /* Entity.cpp */; };
 		76E0D6D7289AD1B1004660D8 /* dooblydoo.mp3 in Sources */ = {isa = PBXBuildFile; fileRef = 76E0D6D1289AD13B004660D8 /* dooblydoo.mp3 */; };
@@ -68,6 +69,7 @@
 		76B1721D28AE2F0F00505665 /* WinScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WinScreen.h; sourceTree = "<group>"; };
 		76B1721F28AE2F2B00505665 /* LossScreen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LossScreen.cpp; sourceTree = "<group>"; };
 		76B1722028AE2F2B00505665 /* LossScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LossScreen.h; sourceTree = "<group>"; };
+		76B1722228AEC7E100505665 /* aliens.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = aliens.mp3; sourceTree = "<group>"; };
 		76C21B21284001F200132D07 /* GameProjFinal(final).cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "GameProjFinal(final).cpp"; sourceTree = "<group>"; };
 		76E0D6CE289AD0DE004660D8 /* Entity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		76E0D6CF289AD0DE004660D8 /* Entity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				76E0D705289C767B004660D8 /* knight.png */,
 				76B1721828AE062200505665 /* power2.png */,
 				76B1721628AE04DF00505665 /* powerup.png */,
+				76B1722228AEC7E100505665 /* aliens.mp3 */,
 				76B1721A28AE07C000505665 /* power3.png */,
 				76E0D703289C7230004660D8 /* sally.png */,
 				76E0D701289C6E1D004660D8 /* brick2.png */,
@@ -265,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76B1722328AEC7FB00505665 /* aliens.mp3 in Sources */,
 				76B1721B28AE090A00505665 /* power3.png in Sources */,
 				76B1721928AE06AF00505665 /* power2.png in Sources */,
 				76B1721728AE04F300505665 /* powerup.png in Sources */,
