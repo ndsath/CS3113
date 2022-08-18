@@ -106,8 +106,8 @@ void LevelB::initialise()
     state.power[0].texture_id = powerup_texture_id;
     state.power[0].set_position(glm::vec3(0.5f, -0.5f, 0.0f));
     state.power[0].set_movement(glm::vec3(3.0f, 0.1f, 0.0f));
-    state.power[0].speed = 0.6f;
-    state.power[0].set_acceleration(glm::vec3(0.0f, 0.1f, 0.0f));
+    state.power[0].speed = 0.4f;
+    state.power[0].set_acceleration(glm::vec3(0.0f, 0.05f, 0.0f));
     state.power->set_height(0.8f);
     state.power->set_width(0.8f);
     
@@ -118,7 +118,7 @@ void LevelB::initialise()
     
     state.bgm = Mix_LoadMUS("dooblydoo.mp3");
     Mix_PlayMusic(state.bgm, -1);
-    Mix_VolumeMusic(0.0f);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/2);
     
     state.jump_sfx = Mix_LoadWAV("bounce.wav");
 }

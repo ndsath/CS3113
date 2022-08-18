@@ -14,8 +14,8 @@ unsigned int LEVELC_DATA[] =
 {
     3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-    3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
     3, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
     3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -111,7 +111,7 @@ void LevelC::initialise()
     
     state.bgm = Mix_LoadMUS("dooblydoo.mp3");
     Mix_PlayMusic(state.bgm, -1);
-    Mix_VolumeMusic(0.0f);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/2);
     
     state.jump_sfx = Mix_LoadWAV("bounce.wav");
 }
